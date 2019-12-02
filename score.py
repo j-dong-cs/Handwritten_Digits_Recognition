@@ -16,12 +16,23 @@ def init():
         
 # note you can pass in multiple rows for scoring
 def run(raw_data):
+    global image
     img_cols = 28
     img_rows = 28
     try:
         #with open(raw_data) as json_file:
         #    data = json.load(json_file)
-        preprocess(raw_data)
+        
+        # convert JSON format img str to bytes and decode back to img file
+        json_to_bytes = json.loads(raw_data).encode('utf-8')
+        decoded_img = base64.decodebytes(json_to_bytes)
+        image = cv.imdecode(np.asarray(bytearray(decoded_img), dtype="uint8"), cv.IMREAD_COLOR) 
+        #image_name = 'imgToPred.jpg'
+        #with open(image_name, 'wb') as image_result:
+        #    image_result.write(decoded_img)        
+        #image_path = os.path.join(os.getcwd(), image_name)
+        
+        preprocess()
         findBoundingBoxes()
         mergeBoundingBoxes()
         extractROI()
@@ -39,13 +50,15 @@ def run(raw_data):
         error = str(e)
         return error
 
-def preprocess(image_path):
-    global img, gray, blur, thresh, edges, dilate, contours
-    img = cv.imread(image_path)
+# This method preprocess input image: image -> grayscale -> blur -> threshold -> edges -> dilate 
+# in order to make it ready to be passed to model for prediction
+def preprocess():
+    global gray, blur, thresh, edges, dilate, contours
+    # img = cv.imread(image_path)
     # resize original image to be fixed size 640 x 480
-    img = cv.resize(img, (640, 480))
+    image = cv.resize(image, (640, 480))
     # convert image to gray scale of pixel value from 0 to 255
-    gray = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
+    gray = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
     # apply gaussian blur to filter image
     blur = cv.GaussianBlur(gray,(5,5),0)
     # apply threshold on blurred image to amplify digits
@@ -59,6 +72,7 @@ def preprocess(image_path):
     # find contours and get the external one
     contours, hier = cv.findContours(dilate, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
+# This method find the bounding box for each digit in the image based on contours
 def findBoundingBoxes():
     global rect
     rect = []
@@ -66,16 +80,15 @@ def findBoundingBoxes():
     for c in contours:
         # get the bounding rect
         x, y, w, h = cv.boundingRect(c)
-        #if w > 10 and h > 10:
         rect.append([x, y, w, h])
 
+# This method merge bounding boxes for same digit
+# and sort each box by x-axis value
 def mergeBoundingBoxes():
     for i in range(len(rect)):
         j = i + 1
         while j < len(rect):
             # check if rect[j] is within rect[i]
-            # print(rect[j][0], ' ', rect[i][0], ' and ', rect[j][0]+rect[j][2], ' ', rect[i][0]+rect[i][2])
-            # print(rect[j][1], ' ', rect[i][1], ' and ', rect[j][1]+rect[j][3], ' ', rect[i][1]+rect[i][3])
             xBound = rect[j][0] > rect[i][0] and rect[j][0]+rect[j][2] < rect[i][0]+rect[i][2]
             yBound = rect[j][1] > rect[i][1] and rect[j][1]+rect[j][3] < rect[i][1]+rect[i][3]
             if (xBound and yBound) == True:
@@ -86,7 +99,7 @@ def mergeBoundingBoxes():
     # sort bounding boxes on x-axis value
     rect = rect[rect[:,0].argsort()]
 
-# Iterate thorugh bounding boxes and extract for ROI
+# This method iterate thorugh bounding boxes and extract for ROI
 def extractROI():
     global digits
     digits = []
@@ -98,6 +111,7 @@ def extractROI():
         # cv.imwrite("ROI_{}.png".format(image_number), ROI)
         image_number += 1
 
+# This method resize each digit image to be 28 x 28 and normalize its values to be between 0 to 1
 def resizeAndNormalize():
     global input_data
     input_data = []
