@@ -65,12 +65,17 @@ A web service of recognizing digits on image.
 - The prediction of digits are returned to the client.
     ```python
     import json
-    import requests
-    with open('Nums.json') as json_file:
-      json_data = json.load(json_file)
-    input_data = json.dumps(json_data)
-    scoring_url = "http://cddea800-aa7b-4ac7-aeae-ac3422fa8261.westus.azurecontainer.io/score"
+    import base64
+
+    image_path = os.path.join(os.getcwd(), 'test_images/IMG_7525.jpg')
+    with open(image_path, 'rb') as file:
+       img = file.read()
+    image_64_encode = base64.encodebytes(img).decode('utf-8')
+    bytes_to_json = json.dumps(image_64_encode)
+       
+    scoring_url = 'http://3ab34ad2-281d-4017-b47f-7a099895a46b.centralus.azurecontainer.io/score'
     headers = { 'Content-Type': 'application/json' }
     response = requests.post(scoring_url, input_data, headers=headers)
     print(json.loads(response.text))
+    [0, 7, 1, 3, 8, 9]
     ```
