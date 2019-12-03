@@ -3,6 +3,19 @@ A web service of recognizing digits on image.
 
 - Import MNIST digits data.
 
+- Build Image Preprocess Pipeline
+  - Convert to GrayScale
+
+  - Apply Gaussian Blur
+
+  - Apply threshold and invert colors
+
+  - Use Canny Edge Detection to find edges
+
+  - Dilate Edges found
+
+  - Find Contours and bouding box for each digit
+  
 - Build and Train a Deep Neural Network Model to predict digits based on image pixels.
     ```python
     # calculate accuracy on the prediction
@@ -39,4 +52,3 @@ A web service of recognizing digits on image.
     print(json.loads(response.text))
       [5,          1,         3,         3,         5,         5,         5,         7,         3,         2]
     ```
-    ![alt text](nums.jpg)
