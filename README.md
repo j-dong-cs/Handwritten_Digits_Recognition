@@ -31,7 +31,7 @@ A web service of recognizing digits on image.
     ![boundingbox](/demo_images/boundingbox.png)
   - Extract each digit with boarder added to improve performance
   
-    ![0](/demo_images/ROI_0.png)  ![1](/demo_images/ROI_1.png)  ![2](/demo_images/ROI_2.png)  ![3](/demo_images/ROI_3.png)  ![4](/demo_images/ROI_4.png)  ![5](/demo_images/ROI_5.png)
+    ![0](/demo_images/ROI_1.png)  ![1](/demo_images/ROI_1.png)  ![2](/demo_images/ROI_2.png)  ![3](/demo_images/ROI_3.png)  ![4](/demo_images/ROI_4.png)  ![5](/demo_images/ROI_5.png)
 
 - Import MNIST digits data.
 
