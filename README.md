@@ -1,22 +1,34 @@
 # Handwritten_Digits_Recognition
 A web service of recognizing digits on image.
 
+- Build Image Preprocess Pipeline.
+  - Convert to GrayScale
+    ![org](/demo_images/original.png)
+    ![gray](/demo_images/gray.png)
+  - Apply Gaussian Blur
+    ![org](/demo_images/original.png)
+    ![blur](/demo_images/blur.png)
+  - Apply threshold and invert colors
+    ![org](/demo_images/original.png)
+    ![thresh](/demo_images/thresh.png)
+  - Use Canny Edge Detection to find edges
+    ![org](/demo_images/original.png)
+    ![edges](/demo_images/edges.png)
+  - Dilate Edges found
+    ![org](/demo_images/original.png)
+    ![dilate](/demo_images/dilate.png)
+  - Find Contours and bouding box for each digit
+    ![boundingbox](/demo_images/boundingbox.png)
+  - Extract each digit with boarder added to improve performance
+    ![0](/demo_images/ROI_0.png)  ![1](/demo_images/ROI_1.png)  ![2](/demo_images/ROI_2.png)  ![3](/demo_images/ROI_3.png)  ![4](/demo_images/ROI_4.png)  ![5](/demo_images/ROI_5.png)
+
 - Import MNIST digits data.
 
-- Build Image Preprocess Pipeline
-  - Convert to GrayScale
-
-  - Apply Gaussian Blur
-
-  - Apply threshold and invert colors
-
-  - Use Canny Edge Detection to find edges
-
-  - Dilate Edges found
-
-  - Find Contours and bouding box for each digit
-  
 - Build and Train a Deep Neural Network Model to predict digits based on image pixels.
+  - Convolutional Neural Network Pipeline:
+    ![CNN pipeline](/demo_images/handwritten_digits_recognition_cnn.jpg)
+
+  - Model performance
     ```python
     # calculate accuracy on the prediction
     acc = np.average(Y_pred == Y_true)
@@ -33,11 +45,11 @@ A web service of recognizing digits on image.
 
 - Deploys the scoring image on Azure Containter Instance (ACI) as a web service.
 
-- Client sends an HTTP POST request with image pixel data.
+- Client convert image into bytes array and serialize it into JSON str.
 
-- The web service extracts pixel data from the JSON request.
+- Client send a HTTP request with JSON str to digits recognition web service.
 
-- The pixle data is sent to the Keras Deep Learning pipeline model for scoring/prediction.
+- The web service decode JSON str into bytes array which is sent to CNN model to predict digits on the image.
 
 - The prediction of digits are returned to the client.
     ```python
@@ -50,5 +62,4 @@ A web service of recognizing digits on image.
     headers = { 'Content-Type': 'application/json' }
     response = requests.post(scoring_url, input_data, headers=headers)
     print(json.loads(response.text))
-      [5,          1,         3,         3,         5,         5,         5,         7,         3,         2]
     ```

@@ -35,6 +35,7 @@ def preprocess(image):
     
     # find contours and get the external one
     contours, hier = cv.findContours(dilate, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    print(type(contours))
 
 # This method find the bounding box for each digit in the image based on contours
 def findBoundingBoxes():
@@ -44,6 +45,7 @@ def findBoundingBoxes():
         # get the bounding rect
         x, y, w, h = cv.boundingRect(c)
         rect.append([x, y, w, h])
+    print(type(rect))
     return rect
 
 # This method merge bounding boxes for same digit
@@ -63,6 +65,7 @@ def mergeBoundingBoxes(rect):
                 j = j + 1
     # sort bounding boxes on x-axis value
     groupedRect = rect[rect[:,0].argsort()].tolist()
+    print(type(groupedRect))
     return groupedRect
 
 # This method iterate thorugh bounding boxes and extract for ROI
@@ -76,6 +79,7 @@ def extractROI(rect):
         digits.append(ROI)
         # cv.imwrite("ROI_{}.png".format(image_number), ROI)
         image_number += 1
+    print(type(digits))
     return digits
 
 # This method resize each digit image to be 28 x 28 and normalize its values to be between 0 to 1
@@ -85,6 +89,7 @@ def resizeAndNormalize(digits):
         digit = cv.resize(digit, (28,28))
         digit = np.divide(digit, 255)
         input_data.append(digit)
+    print(type(input_data))
     return input_data
         
 # note you can pass in multiple rows for scoring
