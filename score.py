@@ -34,7 +34,7 @@ def preprocess(image):
     dilate = cv.dilate(edges, kernel)
     
     # find contours and get the external one
-    contours, hier = cv.findContours(dilate, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    im2, contours, hierarchy = cv.findContours(dilate, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
 # This method find the bounding box for each digit in the image based on contours
 def findBoundingBoxes():
@@ -72,7 +72,7 @@ def extractROI(rect):
     image_number = 0
     for pts in rect:
         # add border to each digit
-        ROI = original[pts[1]-20:pts[1]+pts[3]+20, pts[0]-20:pts[0]+pts[2]+20]
+        ROI = original[pts[1]-10:pts[1]+pts[3]+10, pts[0]-10:pts[0]+pts[2]+10]
         digits.append(ROI)
         # cv.imwrite("ROI_{}.png".format(image_number), ROI)
         image_number += 1
