@@ -79,4 +79,5 @@ A web service of recognizing digits on image.
     headers = { 'Content-Type': 'application/json' }
     response = requests.post(scoring_url, bytes_to_json, headers=headers)
     print(json.loads(response.text))
+    [0, 7, 1, 3, 8, 9]
     ```
